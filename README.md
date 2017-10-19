@@ -43,7 +43,7 @@ such as `com.example.myoltuoauth2startersimple.ShiroAuthzCallback`
 
 `AuthzCallback` will return the `OAuth2AccessToken` and use info `principal` in `Map`
 
-- run your Application
+- the simple [my-oltu-oauth2-starter-simple](https://github.com/ganity/my-oltu-oauth2-starter-simple.git)
 
 
 
