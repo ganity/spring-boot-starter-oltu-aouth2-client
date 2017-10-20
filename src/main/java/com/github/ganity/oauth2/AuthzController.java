@@ -133,6 +133,59 @@ public class AuthzController {
 
     }
 
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public ModelAndView handleLogout() {
+        logger.debug("do oauth 2.0 logout (/logout)");
+
+        try {
+            // 本地退出
+            OAuth2AccessToken accessToken = authzCallback.logout();
+            if (null == accessToken) {
+                return new ModelAndView(new RedirectView(oAuthProperties.getErrorRedirectUri()));
+            }
+
+            // auth server 退出
+            OAuthClientRequest request = OAuthClientRequest
+                    .tokenLocation(oAuthProperties.getTokenEndpoint() + "?access_token=" + accessToken.getAccessToken())
+                    .setClientId(oAuthProperties.getClientId())
+                    .setClientSecret(oAuthProperties.getClientSecret())
+                    .setRedirectURI(oAuthProperties.getRedirectUri())
+//                    .setCode(authzCode)
+                    .setGrantType(GrantType.AUTHORIZATION_CODE)
+                    .buildBodyMessage();
+            //使用base64进行加密
+            byte[] tokenByte = Base64.encodeBase64((oAuthProperties.getClientId() + ":" + oAuthProperties.getClientSecret()).getBytes());
+//            //将加密的信息转换为string
+//            String tokenStr = DataTypeChange.bytesSub2String(tokenByte, 0, tokenByte.length);
+            String tokenStr = new String(tokenByte);
+//            //Basic YFUDIBGDJHFK78HFJDHF==    token的格式
+            String token = "Basic " + tokenStr;
+//        * "Basic Y2xpZW50YXV0aGNvZGU6MTIzNDU2"
+            //把认证信息发到header中
+            request.setHeader("Authorization", token);
+            OAuthClient client = new OAuthClient(new URLConnectionClient());
+//            String app = Utils.findCookieValue(req, "app");
+
+            Class<? extends OAuthAccessTokenResponse> cl = OAuthJSONAccessTokenResponse.class;
+
+            OAuthAccessTokenResponse oauthResponse = client.accessToken(request, "DELETE", cl);
+
+            if (oauthResponse.getResponseCode() == 200) {
+//                String resultStr = oauthResponse.getBody();
+//                ObjectMapper mapper = new ObjectMapper();
+//                Map<String, String> result = mapper.readValue(resultStr, Map.class);
+                return new ModelAndView(new RedirectView(oAuthProperties.getLogoutRedirectUri()));
+            } else {
+                logger.error("Could not access resource: " + oauthResponse.getResponseCode() + " " + oauthResponse.getBody());
+                return new ModelAndView(new RedirectView(oAuthProperties.getErrorRedirectUri()));
+            }
+
+        } catch (Exception e) {
+            logger.error("Could not logout :", e);
+        }
+        return new ModelAndView(new RedirectView(oAuthProperties.getErrorRedirectUri()));
+    }
+
     public OAuth2AccessToken getToken(String authzCode) throws OAuthSystemException, IOException, ApplicationException, OAuthProblemException {
         logger.debug("authorizing");
 
@@ -152,7 +205,6 @@ public class AuthzController {
         String tokenStr = new String(tokenByte);
 //            //Basic YFUDIBGDJHFK78HFJDHF==    token的格式
         String token = "Basic " + tokenStr;
-        System.err.println(token);
 //        * "Basic Y2xpZW50YXV0aGNvZGU6MTIzNDU2"
         //把认证信息发到header中
         request.setHeader("Authorization", token);

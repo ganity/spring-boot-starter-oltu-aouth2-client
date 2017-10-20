@@ -7,4 +7,6 @@ public interface AuthzCallback {
     public static final String PRINCIPAL = "principal";
 
     void callback(OAuth2AccessToken accessToken, Map<String, String> principal);
+
+    OAuth2AccessToken logout();
 }

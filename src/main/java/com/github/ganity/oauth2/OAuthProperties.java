@@ -38,6 +38,8 @@ public class OAuthProperties {
     private Class<? extends AuthzCallback> authzCallbackClass = null;
     private String errorRedirectUri;
 
+    private String logoutRedirectUri;
+
     public String getClientId() {
         return clientId;
     }
@@ -116,5 +118,13 @@ public class OAuthProperties {
 
     public void setErrorRedirectUri(String errorRedirectUri) {
         this.errorRedirectUri = errorRedirectUri;
+    }
+
+    public String getLogoutRedirectUri() {
+        return logoutRedirectUri;
+    }
+
+    public void setLogoutRedirectUri(String logoutRedirectUri) {
+        this.logoutRedirectUri = logoutRedirectUri;
     }
 }
