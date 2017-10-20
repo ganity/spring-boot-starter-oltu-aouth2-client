@@ -66,13 +66,6 @@ public class AuthzController {
 
     @RequestMapping("/authorize")
     public ModelAndView authorize() throws OAuthSystemException, IOException {
-        oAuthProperties.setTokenEndpoint("http://localhost:8510/oauth/token");
-        oAuthProperties.setAuthzEndpoint("http://localhost:8510/oauth/authorize");
-        oAuthProperties.setClientId("clientauthcode");
-        oAuthProperties.setClientSecret("123456");
-        oAuthProperties.setScope("read write");
-        oAuthProperties.setRedirectUri("http://localhost:8080/redirect");
-
         logger.debug("start processing /authorize request");
 
         // 生成state并存储
