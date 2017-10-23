@@ -1,4 +1,4 @@
-# spring-boot-starter-swagger2
+# spring-boot-starter-oltu-aouth2-client
 A spring boot starter with oltu as a aouth2 client
 ## How to build and install
 
@@ -18,7 +18,7 @@ A spring boot starter with oltu as a aouth2 client
 <dependency>
     <groupId>com.github.ganity</groupId>
     <artifactId>spring-boot-starter-oltu-aouth2-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
