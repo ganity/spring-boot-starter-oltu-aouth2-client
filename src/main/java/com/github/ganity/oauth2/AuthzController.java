@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Map;
@@ -127,7 +128,7 @@ public class AuthzController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public ModelAndView handleLogout() {
+    public ModelAndView handleLogout(HttpServletRequest httpServletRequest) {
         logger.debug("do oauth 2.0 logout (/logout)");
 
         try {
@@ -156,6 +157,16 @@ public class AuthzController {
 //        * "Basic Y2xpZW50YXV0aGNvZGU6MTIzNDU2"
             //把认证信息发到header中
             request.setHeader("Authorization", token);
+
+            //设置Cookie
+            Cookie[] cookies = httpServletRequest.getCookies();
+            for (Cookie c : cookies) {
+                if ("SESSION".equals(c.getName())) {
+                    String cookie = c.getValue();
+                    request.addHeader("Cookie", "SESSION="+cookie);
+                }
+            }
+
             OAuthClient client = new OAuthClient(new URLConnectionClient());
 //            String app = Utils.findCookieValue(req, "app");
 
